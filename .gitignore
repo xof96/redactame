@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+local.properties
+captures/
+.cxx/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kotlin
+.kotlin/
+
+# Experiments: never commit large models or downloaded weights
+experiments/models/*.gguf
+experiments/models/*.bin
+experiments/models/*.task
+experiments/**/venv/
+experiments/**/__pycache__/

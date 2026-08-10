@@ -1,0 +1,19 @@
+# Gradle version catalog — single source of truth for dependency versions.
+# Bump deliberately; these are pinned to a known-good, compileSdk 36-capable set.
+[versions]
+agp = "8.9.1"
+kotlin = "2.1.0"
+coroutines = "1.9.0"
+junit = "4.13.2"
+androidxCoreKtx = "1.15.0"
+
+[libraries]
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+junit = { module = "junit:junit", version.ref = "junit" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCoreKtx" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

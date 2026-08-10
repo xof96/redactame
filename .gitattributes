@@ -1,0 +1,12 @@
+# Normalize text files to LF in the repository.
+* text=auto eol=lf
+
+# The Gradle wrapper POSIX script must stay LF; the Windows script stays CRLF.
+gradlew        text eol=lf
+*.bat          text eol=crlf
+
+# Treat the wrapper jar and other archives as binary.
+*.jar          binary
+*.gguf         binary
+*.bin          binary
+*.task         binary

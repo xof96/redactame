@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      Deliberately minimal for Milestone 0: no components declared yet.
+      The InputMethodService and settings Activity arrive in Milestone 1.
+    -->
+    <application
+        android:allowBackup="false"
+        android:label="Redactame"
+        android:supportsRtl="true" />
+
+</manifest>
