@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Redactame</string>
+    <string name="ime_label">Redactame</string>
+    <string name="subtype_label_en">English (US)</string>
+</resources>

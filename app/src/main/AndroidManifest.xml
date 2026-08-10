@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--
-      Deliberately minimal for Milestone 0: no components declared yet.
-      The InputMethodService and settings Activity arrive in Milestone 1.
-    -->
     <application
         android:allowBackup="false"
-        android:label="Redactame"
-        android:supportsRtl="true" />
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.DeviceDefault.Light">
+
+        <!-- Developer harness launcher (Milestone 1). Replaced by real settings later. -->
+        <activity
+            android:name=".setup.SetupActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- The keyboard itself. BIND_INPUT_METHOD ensures only the system can bind it. -->
+        <service
+            android:name=".keyboard.RedactameInputMethodService"
+            android:label="@string/ime_label"
+            android:permission="android.permission.BIND_INPUT_METHOD"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.view.InputMethod" />
+            </intent-filter>
+            <meta-data
+                android:name="android.view.im"
+                android:resource="@xml/method" />
+        </service>
+
+    </application>
 
 </manifest>
