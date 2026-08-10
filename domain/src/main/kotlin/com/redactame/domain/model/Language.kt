@@ -5,10 +5,10 @@ package com.redactame.domain.model
  * candidate model has been evaluated for that language (see the evaluation dataset,
  * Milestone 9), so the type never claims support we haven't validated.
  */
-enum class Language {
-    SPANISH,
-    FRENCH,
-    ENGLISH,
+enum class Language(val code: String) {
+    SPANISH("es"),
+    FRENCH("fr"),
+    ENGLISH("en"),
 }
 
 /**
