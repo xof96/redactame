@@ -28,6 +28,31 @@ class HeuristicLanguageDetectorTest {
     }
 
     @Test
+    fun `detects Spanish from a short everyday phrase`() {
+        assertEquals(Language.SPANISH, detector.detect("gracias, nos vemos mañana"))
+    }
+
+    @Test
+    fun `detects French from a short everyday phrase`() {
+        assertEquals(Language.FRENCH, detector.detect("merci, à demain"))
+    }
+
+    @Test
+    fun `detects English from a short everyday phrase`() {
+        assertEquals(Language.ENGLISH, detector.detect("thanks, see you tomorrow"))
+    }
+
+    @Test
+    fun `uses script signals - Spanish enye`() {
+        assertEquals(Language.SPANISH, detector.detect("¿mañana por la mañana?"))
+    }
+
+    @Test
+    fun `uses script signals - French elision`() {
+        assertEquals(Language.FRENCH, detector.detect("j'aimerais qu'on se voie aujourd'hui"))
+    }
+
+    @Test
     fun `declines when no marker matches`() {
         assertNull(detector.detect("zzz qqq wxyz"))
     }
