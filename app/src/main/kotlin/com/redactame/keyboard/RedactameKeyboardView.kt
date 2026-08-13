@@ -23,6 +23,9 @@ class RedactameKeyboardView(context: Context) : LinearLayout(context) {
     /** Set by the service; fired when the user asks to rewrite, with the chosen target. */
     var onRewrite: (Language) -> Unit = {}
 
+    /** Set by the service; fired when the user taps the mic, with the chosen target. */
+    var onDictate: (Language) -> Unit = {}
+
     private var shifted = false
     private var targetLanguage = DEFAULT_TARGET
     private val letterKeys = mutableListOf<Pair<TextView, Char>>()
@@ -43,8 +46,25 @@ class RedactameKeyboardView(context: Context) : LinearLayout(context) {
         LinearLayout(context).apply {
             orientation = HORIZONTAL
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            addView(buildMicButton())
             Language.entries.forEach { addView(buildLanguageChip(it)) }
             addView(buildRewriteButton())
+        }
+
+    private fun buildMicButton(): TextView =
+        TextView(context).apply {
+            text = "🎙" // 🎙
+            gravity = Gravity.CENTER
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            minHeight = dp(44)
+            setPadding(0, dp(8), 0, dp(8))
+            background = roundedBackground(KEY_SPECIAL)
+            isClickable = true
+            layoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f).apply {
+                val m = dp(2)
+                setMargins(m, m, m, m)
+            }
+            setOnClickListener { onDictate(targetLanguage) }
         }
 
     private fun buildLanguageChip(language: Language): TextView {
