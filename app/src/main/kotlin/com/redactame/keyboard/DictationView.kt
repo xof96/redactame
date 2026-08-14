@@ -12,6 +12,7 @@ import android.widget.TextView
  * The "listening" panel shown while dictating. It displays the live partial transcript and a
  * Cancel button. It is purely presentational: the service owns the speech engine and feeds it
  * text via [setPartial]. When the final transcript arrives, the service switches to the preview.
+ * Styled to match the keyboard's Gboard-like light theme.
  */
 class DictationView(context: Context) : LinearLayout(context) {
 
@@ -27,7 +28,7 @@ class DictationView(context: Context) : LinearLayout(context) {
 
         addView(
             TextView(context).apply {
-                text = "🎙 Listening… — speak in Spanish"
+                text = "Listening… — speak in Spanish"
                 setTextColor(MUTED)
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
                 setPadding(0, 0, 0, dp(8))
@@ -37,7 +38,7 @@ class DictationView(context: Context) : LinearLayout(context) {
         partial = TextView(context).apply {
             setTextColor(TEXT)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-            setPadding(dp(12), dp(12), dp(12), dp(12))
+            setPadding(dp(14), dp(14), dp(14), dp(14))
             background = rounded(CARD)
         }
         addView(partial, LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f))
@@ -46,11 +47,11 @@ class DictationView(context: Context) : LinearLayout(context) {
             TextView(context).apply {
                 text = "Cancel"
                 gravity = Gravity.CENTER
-                setTextColor(Color.WHITE)
+                setTextColor(TEXT)
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
                 minHeight = dp(48)
                 setPadding(0, dp(12), 0, dp(12))
-                background = rounded(CANCEL)
+                background = rounded(SPECIAL)
                 isClickable = true
                 setOnClickListener { onCancel() }
             },
@@ -70,17 +71,17 @@ class DictationView(context: Context) : LinearLayout(context) {
 
     private fun rounded(color: Int): GradientDrawable =
         GradientDrawable().apply {
-            cornerRadius = dp(6).toFloat()
+            cornerRadius = dp(10).toFloat()
             setColor(color)
         }
 
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
 
     private companion object {
-        val BACKGROUND = Color.parseColor("#ECEFF1")
+        val BACKGROUND = Color.parseColor("#F7F8FA")
         val CARD = Color.WHITE
-        val CANCEL = Color.parseColor("#90A4AE")
-        val TEXT = Color.parseColor("#212121")
-        val MUTED = Color.parseColor("#607D8B")
+        val SPECIAL = Color.parseColor("#E2E5EC")
+        val TEXT = Color.parseColor("#202124")
+        val MUTED = Color.parseColor("#5F6368")
     }
 }

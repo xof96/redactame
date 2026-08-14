@@ -10,6 +10,8 @@ sealed interface Key {
     data object Shift : Key
     data object Backspace : Key
     data object Space : Key
+    data object Comma : Key
+    data object Period : Key
     data object Enter : Key
 }
 
@@ -34,6 +36,6 @@ object QwertyLayout {
             addAll("zxcvbnm".map { Key.Letter(it) })
             add(Key.Backspace)
         },
-        listOf(Key.Space, Key.Enter),
+        listOf(Key.Comma, Key.Space, Key.Period, Key.Enter),
     )
 }

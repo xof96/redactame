@@ -5,65 +5,66 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.redactame.R
 import com.redactame.domain.model.Language
 
 /**
- * The keyboard surface: an action row (target-language selector + Rewrite button) above a
- * data-driven QWERTY from [QwertyLayout]. It knows nothing about the InputConnection or the
- * rewrite engine — it only reports typing via [onAction] and rewrite requests via [onRewrite],
- * carrying the currently selected target [Language]. Shift is local state.
+ * The keyboard surface, styled after Gboard's light theme: a flat, minimalist QWERTY with a
+ * top toolbar that replaces Gboard's tool icons with Redactame's actions — a mic, a target
+ * language selector (ES/FR/EN), and Rewrite. Line icons are tinted vector drawables, not emoji.
+ *
+ * It knows nothing about the InputConnection, the rewrite engine, or the microphone: it only
+ * reports typing via [onAction], rewrite requests via [onRewrite], and dictation via [onDictate],
+ * each carrying the currently selected target [Language]. Shift is local state.
  */
 class RedactameKeyboardView(context: Context) : LinearLayout(context) {
 
-    /** Set by the service to receive key actions (typing). */
     var onAction: (KeyAction) -> Unit = {}
-
-    /** Set by the service; fired when the user asks to rewrite, with the chosen target. */
     var onRewrite: (Language) -> Unit = {}
-
-    /** Set by the service; fired when the user taps the mic, with the chosen target. */
     var onDictate: (Language) -> Unit = {}
 
     private var shifted = false
     private var targetLanguage = DEFAULT_TARGET
     private val letterKeys = mutableListOf<Pair<TextView, Char>>()
     private val languageChips = mutableListOf<Pair<TextView, Language>>()
+    private var shiftKey: ImageView? = null
 
     init {
         orientation = VERTICAL
-        setBackgroundColor(BACKGROUND)
-        val pad = dp(4)
-        setPadding(pad, pad, pad, pad)
-        addView(buildActionRow())
+        setBackgroundColor(KB_BG)
+        setPadding(dp(4), dp(6), dp(4), dp(6))
+        addView(buildToolbar())
         QwertyLayout.rows.forEach { addView(buildRow(it)) }
     }
 
-    // --- Action row -------------------------------------------------------------------
+    // --- Top toolbar -------------------------------------------------------------------
 
-    private fun buildActionRow(): LinearLayout =
+    private fun buildToolbar(): LinearLayout =
         LinearLayout(context).apply {
             orientation = HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            setPadding(dp(6), dp(4), dp(6), dp(6))
+
             addView(buildMicButton())
+            addView(gap(dp(6)))
             Language.entries.forEach { addView(buildLanguageChip(it)) }
+            addView(flexibleGap())
             addView(buildRewriteButton())
         }
 
-    private fun buildMicButton(): TextView =
-        TextView(context).apply {
-            text = "🎙" // 🎙
-            gravity = Gravity.CENTER
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-            minHeight = dp(44)
-            setPadding(0, dp(8), 0, dp(8))
-            background = roundedBackground(KEY_SPECIAL)
+    private fun buildMicButton(): ImageView =
+        ImageView(context).apply {
+            setImageResource(R.drawable.ic_mic)
+            setColorFilter(ICON)
+            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            setPadding(dp(6), dp(6), dp(6), dp(6))
+            layoutParams = LinearLayout.LayoutParams(dp(40), dp(40))
             isClickable = true
-            layoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f).apply {
-                val m = dp(2)
-                setMargins(m, m, m, m)
-            }
             setOnClickListener { onDictate(targetLanguage) }
         }
 
@@ -71,14 +72,13 @@ class RedactameKeyboardView(context: Context) : LinearLayout(context) {
         val chip = TextView(context).apply {
             text = language.code.uppercase()
             gravity = Gravity.CENTER
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            minHeight = dp(44)
-            setPadding(0, dp(8), 0, dp(8))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+            setPadding(dp(10), dp(8), dp(10), dp(8))
             isClickable = true
-            layoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f).apply {
-                val m = dp(2)
-                setMargins(m, m, m, m)
-            }
+            layoutParams = LinearLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT,
+            )
             setOnClickListener {
                 targetLanguage = language
                 refreshLanguageChips()
@@ -90,30 +90,23 @@ class RedactameKeyboardView(context: Context) : LinearLayout(context) {
     }
 
     private fun refreshLanguageChips() {
-        languageChips.forEach { (chip, language) ->
-            styleChip(chip, selected = language == targetLanguage)
-        }
+        languageChips.forEach { (chip, language) -> styleChip(chip, language == targetLanguage) }
     }
 
     private fun styleChip(chip: TextView, selected: Boolean) {
-        chip.background = roundedBackground(if (selected) ACCENT else KEY_SPECIAL)
-        chip.setTextColor(if (selected) Color.WHITE else TEXT)
+        chip.setTextColor(if (selected) ACCENT else ICON)
+        chip.setTypeface(null, if (selected) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
     }
 
     private fun buildRewriteButton(): TextView =
         TextView(context).apply {
-            text = "✨ Rewrite" // ✨
+            text = "Rewrite"
             gravity = Gravity.CENTER
-            setTextColor(Color.WHITE)
+            setTextColor(ACCENT)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            minHeight = dp(44)
-            setPadding(dp(8), dp(8), dp(8), dp(8))
-            background = roundedBackground(ACCENT)
+            setPadding(dp(16), dp(8), dp(16), dp(8))
+            background = rounded(ACCENT_SOFT, dp(18))
             isClickable = true
-            layoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT, 3f).apply {
-                val m = dp(2)
-                setMargins(m, m, m, m)
-            }
             setOnClickListener { onRewrite(targetLanguage) }
         }
 
@@ -126,43 +119,58 @@ class RedactameKeyboardView(context: Context) : LinearLayout(context) {
             keys.forEach { addView(buildKey(it)) }
         }
 
-    private fun buildKey(key: Key): TextView {
+    private fun buildKey(key: Key): View {
         val weight = when (key) {
             is Key.Letter -> 1f
-            Key.Shift, Key.Backspace -> 1.5f
-            Key.Enter -> 2f
-            Key.Space -> 5f
+            Key.Comma, Key.Period -> 1f
+            Key.Shift, Key.Backspace, Key.Enter -> 1.5f
+            Key.Space -> 4f
         }
-        val special = key !is Key.Letter
+        return when (key) {
+            is Key.Letter -> textKey(labelFor(key), weight, KEY, KEY_TEXT).also {
+                letterKeys.add(it to key.lower)
+            }
+            Key.Comma -> textKey(",", weight, SPECIAL, KEY_TEXT)
+            Key.Period -> textKey(".", weight, SPECIAL, KEY_TEXT)
+            Key.Space -> textKey("", weight, KEY, KEY_TEXT)
+            Key.Shift -> iconKey(R.drawable.ic_shift, weight, SPECIAL, ICON).also { shiftKey = it }
+            Key.Backspace -> iconKey(R.drawable.ic_backspace, weight, SPECIAL, ICON)
+            Key.Enter -> iconKey(R.drawable.ic_return, weight, ACCENT_SOFT, ACCENT)
+        }.apply { setOnClickListener { onKey(key) } }
+    }
 
-        val view = TextView(context).apply {
-            text = labelFor(key)
+    private fun textKey(label: String, weight: Float, bg: Int, textColor: Int): TextView =
+        TextView(context).apply {
+            text = label
             gravity = Gravity.CENTER
-            setTextColor(TEXT)
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-            minHeight = dp(48)
-            background = roundedBackground(if (special) KEY_SPECIAL else KEY)
+            setTextColor(textColor)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+            background = rounded(bg, dp(8))
             isClickable = true
             isFocusable = true
-            setPadding(0, dp(12), 0, dp(12))
-            layoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT, weight).apply {
-                val m = dp(2)
-                setMargins(m, m, m, m)
-            }
-            setOnClickListener { onKey(key) }
+            layoutParams = keyParams(weight)
         }
 
-        if (key is Key.Letter) letterKeys.add(view to key.lower)
-        return view
-    }
+    private fun iconKey(drawableRes: Int, weight: Float, bg: Int, tint: Int): ImageView =
+        ImageView(context).apply {
+            setImageResource(drawableRes)
+            setColorFilter(tint)
+            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            setPadding(dp(12), dp(12), dp(12), dp(12))
+            background = rounded(bg, dp(8))
+            isClickable = true
+            isFocusable = true
+            layoutParams = keyParams(weight)
+        }
 
-    private fun labelFor(key: Key): String = when (key) {
-        is Key.Letter -> if (shifted) key.lower.uppercaseChar().toString() else key.lower.toString()
-        Key.Shift -> "⇧"       // ⇧
-        Key.Backspace -> "⌫"   // ⌫
-        Key.Enter -> "⏎"       // ⏎
-        Key.Space -> "space"
-    }
+    private fun keyParams(weight: Float): LayoutParams =
+        LayoutParams(0, dp(46), weight).apply {
+            val m = dp(3)
+            setMargins(m, m, m, m)
+        }
+
+    private fun labelFor(key: Key.Letter): String =
+        if (shifted) key.lower.uppercaseChar().toString() else key.lower.toString()
 
     private fun onKey(key: Key) {
         when (key) {
@@ -170,6 +178,8 @@ class RedactameKeyboardView(context: Context) : LinearLayout(context) {
                 val ch = if (shifted) key.lower.uppercaseChar() else key.lower
                 onAction(KeyAction.Text(ch.toString()))
             }
+            Key.Comma -> onAction(KeyAction.Text(","))
+            Key.Period -> onAction(KeyAction.Text("."))
             Key.Space -> onAction(KeyAction.Text(" "))
             Key.Backspace -> onAction(KeyAction.Backspace)
             Key.Enter -> onAction(KeyAction.Enter)
@@ -182,13 +192,23 @@ class RedactameKeyboardView(context: Context) : LinearLayout(context) {
         letterKeys.forEach { (tv, lower) ->
             tv.text = if (shifted) lower.uppercaseChar().toString() else lower.toString()
         }
+        shiftKey?.apply {
+            setColorFilter(if (shifted) ACCENT else ICON)
+            background = rounded(if (shifted) ACCENT_SOFT else SPECIAL, dp(8))
+        }
     }
 
     // --- Helpers -----------------------------------------------------------------------
 
-    private fun roundedBackground(color: Int): GradientDrawable =
+    private fun gap(width: Int): View =
+        View(context).apply { layoutParams = LinearLayout.LayoutParams(width, 1) }
+
+    private fun flexibleGap(): View =
+        View(context).apply { layoutParams = LinearLayout.LayoutParams(0, 1, 1f) }
+
+    private fun rounded(color: Int, radius: Int): GradientDrawable =
         GradientDrawable().apply {
-            cornerRadius = dp(6).toFloat()
+            cornerRadius = radius.toFloat()
             setColor(color)
         }
 
@@ -196,10 +216,12 @@ class RedactameKeyboardView(context: Context) : LinearLayout(context) {
 
     private companion object {
         val DEFAULT_TARGET = Language.FRENCH
-        val BACKGROUND = Color.parseColor("#ECEFF1")
+        val KB_BG = Color.parseColor("#F7F8FA")
         val KEY = Color.WHITE
-        val KEY_SPECIAL = Color.parseColor("#CFD8DC")
-        val ACCENT = Color.parseColor("#3F51B5")
-        val TEXT = Color.parseColor("#212121")
+        val SPECIAL = Color.parseColor("#E2E5EC")
+        val ACCENT = Color.parseColor("#1A73E8")
+        val ACCENT_SOFT = Color.parseColor("#E8F0FE")
+        val KEY_TEXT = Color.parseColor("#202124")
+        val ICON = Color.parseColor("#5F6368")
     }
 }
