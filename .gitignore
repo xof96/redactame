@@ -17,9 +17,10 @@ Thumbs.db
 # Kotlin
 .kotlin/
 
-# Experiments: never commit large models or downloaded weights
+# Experiments: never commit large models, downloaded weights, or run outputs
 experiments/models/*.gguf
 experiments/models/*.bin
 experiments/models/*.task
+experiments/results/
 experiments/**/venv/
 experiments/**/__pycache__/
