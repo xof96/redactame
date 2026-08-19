@@ -1,0 +1,11 @@
+# Redactame fine-tuning dependencies. Installed into experiments/training/.venv (Python 3.11).
+#
+# NOTE: PyTorch is installed SEPARATELY with the CUDA index URL (see README.md), because the
+# GPU build is not served from the default PyPI index. Install torch first, then this file.
+
+transformers>=4.44      # load the base model + tokenizer
+datasets>=2.20          # load/transform the training data
+peft>=0.12              # inject the LoRA adapters (the "LoRA" in QLoRA)
+bitsandbytes>=0.43      # 4-bit quantization of the base model (the "Q" in QLoRA)
+trl>=0.9                # SFTTrainer: high-level supervised fine-tuning loop
+accelerate>=0.33        # device placement, mixed precision, training orchestration

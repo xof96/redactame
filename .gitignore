@@ -23,4 +23,9 @@ experiments/models/*.bin
 experiments/models/*.task
 experiments/results/
 experiments/**/venv/
+experiments/**/.venv/
 experiments/**/__pycache__/
+# Training artifacts (checkpoints, adapters, merged/quantized models)
+experiments/training/checkpoints/
+experiments/training/output/
+experiments/training/*.gguf
