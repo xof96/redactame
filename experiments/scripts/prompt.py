@@ -22,7 +22,7 @@ STYLE_NAMES = {
 }
 
 # Prompt version, bumped when we change the wording, so results stay comparable.
-PROMPT_VERSION = "v1"
+PROMPT_VERSION = "v2"
 
 SYSTEM_PROMPT = """You are Redactame, a text rewriting assistant.
 
