@@ -71,7 +71,7 @@ Ollama and llama.cpp cannot use a bare adapter, they need a complete model.
 GGUF is the file format Ollama and llama.cpp load. Clone `llama.cpp` once, then run its converter:
 
 ```powershell
-python convert_hf_to_gguf.py <path-to>\merged_model --outfile redactame.gguf --outtype f16
+python convert_hf_to_gguf.py <path-to>\merged_model --outfile <path-to>\merged_model\redactame.gguf --outtype f16
 ```
 
 Optional, quantize to 4-bit to shrink it for the phone:
@@ -85,13 +85,13 @@ Optional, quantize to 4-bit to shrink it for the phone:
 Create a file named `Modelfile` next to the gguf with a single line pointing at it:
 
 ```
-FROM ./redactame.gguf
+FROM <path-to>\merged_model\redactame.gguf
 ```
 
 Then register it:
 
 ```powershell
-ollama create redactame-v2:ft -f Modelfile
+ollama create redactame-v<version_number>:ft -f Modelfile
 ```
 
 **5. Test the model.**
@@ -99,13 +99,13 @@ ollama create redactame-v2:ft -f Modelfile
 Quick manual check:
 
 ```powershell
-ollama run redactame-v2:ft "<full prompt + text>"
+ollama run redactame-v<version_number>:ft "<full prompt + text>"
 ```
 
 Systematic check (the important one), through our eval harness:
 
 ```powershell
-python ..\scripts\run_eval.py --model redactame-v2:ft
+python ..\scripts\run_eval.py --model redactame-v<version_number>:ft
 ```
 
 Do not judge a fine-tune from a single example. Measure on the whole eval set and compare against
