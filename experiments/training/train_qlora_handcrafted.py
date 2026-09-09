@@ -57,7 +57,7 @@ def main() -> None:
     lora_config = LoraConfig(
         r=16,
         lora_alpha=32,
-        lora_dropout=0.05,
+        lora_dropout=0.1,
         bias="none",
         task_type="CAUSAL_LM",
         target_modules="all-linear",
@@ -70,7 +70,7 @@ def main() -> None:
         num_train_epochs=2,
         per_device_train_batch_size=5,
         gradient_accumulation_steps=3,     # effective batch = 1 * 4
-        learning_rate=2e-4,
+        learning_rate=1e-4,
         lr_scheduler_type="cosine",
         max_length=768,
         packing=False,                       # pack multiple examples into one context to save VRAM
@@ -81,6 +81,7 @@ def main() -> None:
         save_strategy="epoch",
         report_to="none",
         seed=42,
+        assistant_only_loss=True  # Loss is computed only on the assistant responses
     )
 
     trainer = SFTTrainer(
