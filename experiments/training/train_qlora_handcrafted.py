@@ -68,11 +68,11 @@ def main() -> None:
     sft_config = SFTConfig(
         output_dir=str(OUTPUT_DIR),
         num_train_epochs=2,
-        per_device_train_batch_size=5,
-        gradient_accumulation_steps=3,     # effective batch = 1 * 4
+        per_device_train_batch_size=2,  # 5 -> 2 to fit in 6GB VRAM, since model changes from 1.5B -> 3B
+        gradient_accumulation_steps=8,
         learning_rate=1e-4,
         lr_scheduler_type="cosine",
-        max_length=768,
+        max_length=512,  # truncate long examples to fit in VRAM
         packing=False,                       # pack multiple examples into one context to save VRAM
         gradient_checkpointing=True,       # trade compute for less VRAM
         bf16=True,
