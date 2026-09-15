@@ -11,9 +11,9 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "scripts"))
 from prompt import build_messages  # noqa: E402
 
-BASE_MODEL = "Qwen/Qwen2.5-1.5B-Instruct"  # ej: "meta-llama/Llama-3.2-3B"
-ADAPTER_PATH = HERE / "output" / "qwen2.5-1.5b-redactame-v3.2-lora"         # where the LoRA adapter is stored
-OUTPUT_DIR = HERE / "output" / "qwen2.5-1.5b-redactame-v3.2-lora" / "merged_model"  # where the merged model will be saved
+BASE_MODEL = "Qwen/Qwen2.5-3B-Instruct"
+ADAPTER_PATH = HERE / "output" / "qwen2.5-3b-redactame-v4-lora"  # where the LoRA adapter is stored
+OUTPUT_DIR = HERE / "output" / "qwen2.5-3b-redactame-v4-lora" / "merged_model"  # where the merged model will be saved
 
 # Load the base model in float16/bfloat16 (without quantization)
 base_model = AutoModelForCausalLM.from_pretrained(

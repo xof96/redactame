@@ -14,10 +14,10 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "scripts"))
 from prompt import build_messages  # noqa: E402
 
-BASE_MODEL = "Qwen/Qwen2.5-1.5B-Instruct"
+BASE_MODEL = "Qwen/Qwen2.5-3B-Instruct"
 TRAINING_DATA_FILE_NAMES = ["train.jsonl", "train_real.jsonl", "train_synth.jsonl", "train_synth_gpt.jsonl"]
 DATA_FILES = [(HERE / "data" / name) for name in TRAINING_DATA_FILE_NAMES if (HERE / "data" / name).exists()]
-OUTPUT_DIR = HERE / "output" / "qwen2.5-1.5b-redactame-v3.2-lora"
+OUTPUT_DIR = HERE / "output" / "qwen2.5-3b-redactame-v4-lora"
 
 
 def load_training_dataset() -> Dataset:
