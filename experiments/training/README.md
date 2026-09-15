@@ -74,12 +74,6 @@ GGUF is the file format Ollama and llama.cpp load. Clone `llama.cpp` once, then 
 python convert_hf_to_gguf.py <path-to>\merged_model --outfile <path-to>\merged_model\redactame.gguf --outtype f16
 ```
 
-Optional, quantize to 4-bit to shrink it for the phone:
-
-```powershell
-.\llama-quantize.exe redactame.gguf redactame-q4.gguf Q4_K_M
-```
-
 **4. Register the model in Ollama with a Modelfile.**
 
 Create a file named `Modelfile` next to the gguf with a single line pointing at it:
@@ -93,6 +87,23 @@ Then register it:
 ```powershell
 ollama create redactame-v<version_number>:ft -f Modelfile
 ```
+
+**4b. Quantize to 4-bit (shrink it for the phone).**
+
+Let Ollama quantize directly from the f16 gguf when creating the model, by adding
+`--quantize`. No extra tooling is needed:
+
+```powershell
+ollama create redactame-v<version_number>-q4:ft -f Modelfile --quantize q4_K_M
+```
+
+The `FROM` in the Modelfile must point to a non-quantized (f16/f32) gguf, which is what step 3
+produces. `q4_K_M` is the usual size/quality sweet spot; `q5_K_M` and `q8_0` trade size for
+quality. This drops a 3B model from ~6 GB (f16) to ~1.9 GB, so it fits in VRAM and runs faster.
+
+> Do **not** use llama.cpp's `llama-quantize.exe`: it is a compiled binary that only exists if you
+> build llama.cpp from source. We only cloned llama.cpp to run its Python converter
+> (`convert_hf_to_gguf.py`), so that binary is not present. `ollama create --quantize` replaces it.
 
 **5. Test the model.**
 
