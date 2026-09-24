@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/brand/banner.webp" alt="Redactame banner" width="100%">
+</p>
+
 # Redactame
 
 An on-device, privacy-first Android keyboard that turns informal spoken or written

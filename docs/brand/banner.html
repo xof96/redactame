@@ -1,0 +1,75 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,800;1,9..144,400&family=Caveat:wght@500&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<style>
+  html,body{margin:0;width:2100px;height:900px;overflow:hidden;background:#b8892b}
+  .stage{position:relative;width:2100px;height:900px;
+    background:
+      radial-gradient(ellipse 60% 70% at 50% 42%, rgba(255,244,200,.55), transparent 70%),
+      linear-gradient(115deg,#7a5418 0%,#c4952f 18%,#f2d57a 38%,#d8ad45 55%,#f6df92 70%,#b0801f 88%,#6e4b14 100%);}
+  svg.fx{position:absolute;inset:0}
+  .row{position:absolute;left:0;right:0;top:292px;display:flex;justify-content:center;align-items:center;gap:56px}
+  h1{margin:0;font-family:Fraunces,serif;font-weight:800;font-size:236px;letter-spacing:-6px;line-height:1;color:#141210;
+     font-variation-settings:"opsz" 144;
+     text-shadow:0 3px 0 rgba(255,241,190,.75),0 -2px 1px rgba(60,35,0,.45),0 18px 40px rgba(70,40,0,.35)}
+  h1 .me{color:#0b8f86;text-shadow:0 3px 0 rgba(255,241,190,.75),0 -2px 1px rgba(0,40,36,.5),0 18px 40px rgba(0,60,55,.3)}
+  .logo{width:236px;height:236px;border-radius:52px;overflow:hidden;flex:none;box-shadow:0 0 0 5px #111,0 3px 0 5px rgba(255,241,190,.6),0 22px 44px rgba(60,35,0,.45)}
+  .tag{position:absolute;top:586px;left:0;right:0;text-align:center;font-family:"JetBrains Mono",monospace;font-size:26px;letter-spacing:9px;text-transform:uppercase;color:#3a2808}
+  .tag b{color:#0b6f69;font-weight:500}
+</style></head>
+<body><div class="stage">
+
+<svg class="fx" width="2100" height="900" viewBox="0 0 2100 900">
+  <defs>
+    <filter id="brush" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0015 0.55" numOctaves="2" seed="7"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 .9  0 0 0 0 .6  0 0 0 .55 -.18"/>
+    </filter>
+    <radialGradient id="vig" cx="50%" cy="48%" r="75%">
+      <stop offset="55%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#2a1800" stop-opacity=".55"/>
+    </radialGradient>
+  </defs>
+  <rect width="2100" height="900" filter="url(#brush)" opacity=".7"/>
+  <!-- guilloche: sound waves radiating from the keycap, engraved into the brass -->
+  <g fill="none" stroke="#5a3b0a" stroke-opacity=".16" stroke-width="1.4" id="rings"></g>
+  <!-- decorative voice waveform bleeding off both edges (safe to crop) -->
+  <g id="wave" stroke="#0b6f69" stroke-opacity=".35" stroke-width="5" stroke-linecap="round"></g>
+  <rect width="2100" height="900" fill="url(#vig)"/>
+</svg>
+
+<div class="row">
+  <div class="logo"><img src="icon.jpg" alt="Redactame logo" style="width:100%;height:100%;transform-origin:56% 53%;transform:scale(1.3)"></div>
+  <h1>Redacta<span class="me">me</span></h1>
+</div>
+
+<div class="tag">speak casually <b>&#9670;</b> send it polished</div>
+
+
+</div>
+<script>
+  const ns="http://www.w3.org/2000/svg";
+  const rings=document.getElementById('rings');
+  const cx=1050, cy=410;
+  for(let i=0;i<46;i++){
+    const r=120+i*26, p=document.createElementNS(ns,'path');
+    let d='';
+    for(let a=0;a<=360;a+=2){
+      const t=a*Math.PI/180, rr=r+Math.sin(t*12+i*.5)*(3+i*.18);
+      d+=(a?'L':'M')+(cx+rr*Math.cos(t)*1.55).toFixed(1)+' '+(cy+rr*Math.sin(t)).toFixed(1);
+    }
+    p.setAttribute('d',d+'Z'); rings.appendChild(p);
+  }
+  const wave=document.getElementById('wave');
+  function bars(x0,x1,dir){
+    for(let x=x0;x<x1;x+=14){
+      const k=dir>0?(x-x0)/(x1-x0):(x1-x)/(x1-x0);
+      const h=(8+90*Math.abs(Math.sin(x*.037)*Math.cos(x*.011)))*(1-k*.9);
+      const l=document.createElementNS(ns,'line');
+      l.setAttribute('x1',x);l.setAttribute('x2',x);l.setAttribute('y1',410-h);l.setAttribute('y2',410+h);
+      wave.appendChild(l);
+    }
+  }
+  bars(-10,330,1); bars(1770,2110,-1);
+</script>
+</body></html>
